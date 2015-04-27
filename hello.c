@@ -1,20 +1,47 @@
 #include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
-int repeat(int x,  char *yup);
+struct database {
+    char *host;
+    char *username;
+    char *password;
+    int port;
+};
 
-int main (void) {
-    char *word = "Hello, World";
-    int number = 3;
+struct database *new_database(char *host, char *username, char *password, int port ){
+    struct database *connect = malloc(sizeof(struct database));
+    connect->host = strdup(host);
+    connect->username = strdup(username);
+    connect->password = strdup(password);
+    connect->port = port;
     
-    repeat(number, word);
-    
-    return 0;
+    return connect;
 }
 
-int repeat(int x, char *yup) {
-    int z;
-    for (z = 0; z < x; z ++) {
-         puts(yup);
-    }
+void database_destroy(struct database *connect)
+{
+    assert(connect != NULL);
+    
+    free(connect->host);
+    free(connect);
+}
+
+void database_print(struct database *connect)
+{
+    printf("Url: %s\n", connect->host);
+    printf("\tUsername: %s\n", connect->username);
+    printf("\tHeight: %s\n", connect->password);
+    printf("\tWeight: %d\n", connect->port);
+}
+
+int main(void) {
+    struct database *postgres = new_database("local","cserver","mine", 5432);
+    
+    printf("pstgres is at memory location %p:\n", postgres);
+    database_print(postgres);
+    database_destroy(postgres);
     return 0;
+    
 }
